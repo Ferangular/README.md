@@ -1,0 +1,45 @@
+// Estilos para oscurecer la pantalla
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); // Color oscuro con opacidad
+  z-index: 999; // Z-index para superponer sobre todo
+
+  // Omitir el área del círculo
+  .circle-container {
+    position: absolute;
+    top: 50%; // Ajusta la posición verticalmente
+    left: 50%; // Ajusta la posición horizontalmente
+    transform: translate(-50%, -50%);
+    z-index: 1000; // Z-index para estar encima del oscurecimiento
+
+    // Estilos para el círculo
+    .circle-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7); // Color oscuro para el círculo
+      border-radius: 50%; // Forma de círculo
+      clip-path: circle(50% at center); // Crear un círculo recortado
+    }
+
+    // Estilos para la imagen dentro del círculo
+    picture {
+      position: relative;
+      width: 100%;
+      height: 100%;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%; // Ajustar la imagen al círculo
+      }
+    }
+  }
+}

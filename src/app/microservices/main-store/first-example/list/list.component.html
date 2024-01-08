@@ -1,0 +1,13 @@
+<p>list works!</p>
+
+<ul>
+  <li *ngFor="let todo of todos()">
+    <input type="checkbox"
+           (change)="updateTodo(todo)"
+           [checked]="todo.completed">
+    {{todo.title }}
+  </li>
+</ul>
+
+<app-child></app-child>
+<button class="btn btn-success" (click)="setchild()">SET CHILD</button>

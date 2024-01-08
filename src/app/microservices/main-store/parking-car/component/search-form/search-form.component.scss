@@ -1,0 +1,41 @@
+.box {
+  border: solid 1px lightgrey;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.box p {
+  margin: 0;
+}
+
+.box form {
+  display: flex;
+}
+
+.box form input {
+  margin-right: 0.5rem;
+}
+
+.box form button {
+  width: 80px;
+}
+
+.examples button {
+  border: 0;
+  background: none;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  margin: 0 0.5rem 0 0;
+}
+
+.examples button:last-child {
+  margin: 0;
+}
+
+.shortcuts h5 {
+  margin: 0;
+}

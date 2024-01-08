@@ -1,0 +1,18 @@
+:host {
+  display: block;
+  height: 2.4rem;
+  margin-bottom: 1rem;
+}
+
+p {
+  border: solid 1px transparent;
+  margin: 0;
+  padding: 0.5rem;
+}
+
+.error {
+  background-color: lightyellow;
+  border: solid 1px red;
+  color: red;
+  text-align: center;
+}

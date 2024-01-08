@@ -1,0 +1,15 @@
+<header>
+  <h1>Parking Lot Control</h1>
+</header>
+
+<!--https://angularindepth.com/posts/1408/how-to-manage-angular-state-in-your-components-->
+<ng-container *ngIf="vm$ | async as vm">
+  <app-error-message *ngIf="vm.error" [message]="vm.error"></app-error-message>
+
+  <app-search-form
+    [loading]="vm.loading"
+    (addPlate)="addPlate($event)"
+  ></app-search-form>
+
+  <app-car-list [cars]="vm.cars"></app-car-list>
+</ng-container>

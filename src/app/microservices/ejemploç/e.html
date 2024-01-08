@@ -1,0 +1,204 @@
+<ng-container *ngIf="store.vm$ | async as vm">
+  <orbita-framework-layout-horizontal-template
+    [ites]="items"
+    [securityOptions]="securityOptions"
+    [showFullScreenButton]="true"
+    [showRefreshButton]="true"
+    [identityAuthorizedLayout]="true"
+    [identifier]="'testPage'"
+    class="d-flex flex-column h-100 m-0"
+  >
+    <p-toolbar>
+      <div class="p-toolbar-group-left flex-column align-items-start">
+        <h4 style="font-weight: 400">Puesto de usuario</h4>
+        <h3 style="font-weight: 500">{{ pageTitle }}</h3>
+      </div>
+      <div class="p-toolbar-group-right gap-4 align-self-end">
+        <div class="d-flex gap-1 flex-column">
+          <p-button
+            icon="pi pi-cog"
+            pTooltip="Configuración"
+            styleClass="p-button-sm"
+            (onClick)="op.toggle($event)"
+          ></p-button>
+          <p-overlayPanel #op>
+            <ng-template pTemplate>
+              <div style="width: 15rem" class="d-flex flex-column gap-2">
+                <div class="p-field-checkbox">
+                  <p-checkbox
+                    #autoRead
+                    [binary]="true"
+                    [(ngModel)]="vm.autoRead"
+
+                    inputId="autoRead"
+                  ></p-checkbox>
+                  <!--                  (ngModelChange)="store.updateLabConfig({  automaticReading:autoRead.checked(),-->
+                  <!--                    requiredReadingConfirmation: readingConfirmation.checked()})"-->
+
+                  <label class="mb-0 pl-2" for="autoRead"
+                  >Lectura automática</label
+                  >
+                </div>
+                <div class="p-field-checkbox">
+                  <p-checkbox
+                    #readingConfirmation
+                    [(ngModel)]="vm.askWeightReadingConfirmation"
+
+                    [binary]="true"
+                    inputId="askWeightReadingConfirmation"
+                  ></p-checkbox>
+                  <!--                  (ngModelChange)="store.updateLabConfig({  automaticReading:autoRead.checked(),-->
+                  <!--                      requiredReadingConfirmation: readingConfirmation.checked()})"-->
+                  <label class="mb-0 pl-2" for="askWeightReadingConfirmation"
+                  >Confirmación de lectura</label
+                  >
+                </div>
+                <!--                (onClick)="[saveSettings(),op.hide()]"-->
+                <p-button
+                  label="Guardar"
+                  (onClick)="store.updateLabConfig()"
+                  class="align-self-end mt-2 p-button-sm"
+                  styleClass="p-button-sm"
+                ></p-button>
+              </div>
+            </ng-template>
+          </p-overlayPanel>
+        </div>
+      </div>
+    </p-toolbar>
+    <div
+      class="d-flex flex-row justify-content-center w-100 h-100"
+      style="background-color: lightgray"
+    >
+      <div id="input-box" class="d-flex flex-column p-4 gap-2">
+        <div class="d-flex flex-column w-100">
+          <label for="sampleBarCode">Código de barras:</label>
+          <div class="d-inline-flex justify-content-between">
+            <div class="d-inline-flex gap-2">
+              <input
+                #sampleBarCodeInput
+                autofocus
+                type="text"
+                pInputText
+                inputId="sampleBarCode"
+                (keydown.Enter)="store.requestRichness(sampleBarCodeInput)"
+                [ngModel]="vm.sampleBarCode"
+                (ngModelChange)="
+store.updateSampleBarCode(sampleBarCodeInput.value)
+"
+              />
+              <p-button
+                label="Medir (º)"
+                [loading]="vm.loading"
+                [disabled]="vm.loading"
+                (onClick)="store.requestRichness(sampleBarCodeInput)"
+              ></p-button>
+            </div>
+            <p-button
+              icon="pi pi-exclamation-triangle"
+              pToolTip="Incidencia"
+              styleClass="issue-btn"
+              (onClick)="store.toggleStateProp('issueVisible')"
+            ></p-button>
+          </div>
+        </div>
+        <ng-container *ngIf="!!vm.lastRichnessRegistered">
+          <p-divider layout="horizontal">Último registro</p-divider>
+          <dl class="container">
+            <div class="row">
+              <dt class="col-sm-3">Secuencia</dt>
+              <dd class="col-sm-9">
+                {{ vm.lastRichnessRegistered?.sequenceNumber }}
+              </dd>
+            </div>
+            <div class="row">
+              <dt class="col-sm-3">Código</dt>
+              <dd class="col-sm-9">
+                {{ vm.lastRichnessRegistered?.sampleBarCode }}
+              </dd>
+            </div>
+            <div class="row">
+              <dt class="col-sm-3">Riqueza (%)</dt>
+              <dd class="col-sm-9">
+                {{ vm.lastRichnessRegistered?.richness | number : "1.1-1" }}
+              </dd>
+            </div>
+            <div class="row">
+              <dt class="col-sm-3">Hora</dt>
+              <dd class="col-sm-9">
+                {{ vm.lastRichnessRegistered?.dateTime | date : "HH:mm:ss" }}
+              </dd>
+            </div>
+          </dl>
+        </ng-container>
+      </div>
+    </div>
+  </orbita-framework-layout-horizontal-template>
+  <p-dialog
+    [(visible)]="vm.issueVisible"
+    header="POLARIMETRÍA - Cierre por incidencia"
+    [style]="{ width: '610px' }"
+    [closable]="true"
+    [closeOnEscape]="true"
+  >
+    <ng-template pTemplate="body">
+      <!-- Nº ticket sería visible para un perfil de usuario que tengas los permisos.  -->
+      <issue-summary-template [ticketVisible]="true"></issue-summary-template>
+      <!-- ./ Nº ticket sería visible para un perfil de usuario que tengas los permisos.  -->
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <div class="d-inline-flex gap-2 justify-content-end w-20">
+        <!-- sería visible para un perfil de usuario que tengas los permisos.  -->
+        <p-button
+          label="Ult.viajes"
+          styleClass="p-button-sm"
+          (onClick)="store.toggleStateProp('issueVisible')"
+        ></p-button>
+        <p-button
+          label="Med.día ant."
+          styleClass="p-button-sm"
+          (onClick)="store.toggleStateProp('issueVisible')"
+        ></p-button>
+        <p-button
+          label="Éste viaje"
+          styleClass="p-button-sm"
+          [disabled]="true"
+          (onClick)="store.toggleStateProp('issueVisible')"
+        ></p-button>
+        <p-button
+          label="Anular resto"
+          styleClass="p-button-sm"
+          (onClick)="store.toggleStateProp('issueVisible')"
+        ></p-button>
+        <!-- ./ sería visible para un perfil de usuario que tengas los permisos.  -->
+        <p-button
+          label="Cancelar"
+          styleClass="p-button-sm"
+          (onClick)="store.toggleStateProp('issueVisible')"
+        ></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+  <p-toast position="bottom-center"></p-toast>
+  <p-confirmDialog
+    [baseZIndex]="2000"
+    acceptLabel="Confirmar"
+    [rejectVisible]="false"
+    [style]="{ minWidth: '310px' }"
+  ></p-confirmDialog>
+  <manual-reading-dialog
+    [(visible)]="vm.manualReading"
+    header="Lectura manual"
+    label="Riqueza (%)"
+    [(value)]="vm.manualRichness"
+    (valueChange)="store.updateManualRichness($event)"
+    [showReadButton]="true"
+    [readRequest]="store.getRichness()"
+    (onConfirm)="
+store.confirmManualReading({
+  richness: $event,
+  input: sampleBarCodeInput
+})
+"
+  ></manual-reading-dialog>
+</ng-container>
